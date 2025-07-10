@@ -1,6 +1,8 @@
 import allure
 
 from pages.main_page import MainPage
+from urls import Urls
+
 
 @allure.feature("Главная страница")
 class TestMainPage:
@@ -8,12 +10,14 @@ class TestMainPage:
     def test_go_to_constructor(self, driver):
         main_page = MainPage(driver)
         main_page.click_constructor()
+        assert main_page.get_cur_url() == Urls.main
 
 
     @allure.title("Переход в ленту заказов")
     def test_go_to_order_feed(self, driver):
         main_page = MainPage(driver)
         main_page.click_order_feed()
+        assert main_page.get_cur_url() == Urls.feed
 
 
     @allure.title("Отображение деталей ингредиента")
@@ -37,5 +41,4 @@ class TestMainPage:
         main_page.add_ingredient_to_order()
         new_count = main_page.get_ingredient_counter()
         assert int(new_count) > int(initial_count)
-        #assert 1 > int(initial_count)
 

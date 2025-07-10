@@ -1,30 +1,28 @@
-from selenium.webdriver import ActionChains
-import time
 from pages.main_page import MainPage
 from locators.order_page_locators import OrderPageLocators
 from locators.order_page_locators import LoginPageLocators
 import allure
-from data import UserData
+
+from urls import Urls
 
 
 class OrderPage(MainPage):
     @allure.step("Получить общее количество заказов")
-    def login(self):
-
-        self.driver.find_element(*LoginPageLocators.login_input).send_keys(UserData.email)
-        self.driver.find_element(*LoginPageLocators.password_input).send_keys(UserData.password)
-        time.sleep(1)
-        self.driver.find_element(*LoginPageLocators.login_button).click()
-        time.sleep(1)
+    def login(self,email,pwd):
+        self.fill_element(LoginPageLocators.login_input,email)
+        self.fill_element(LoginPageLocators.password_input,pwd)
+        self.wait_element_disappear(OrderPageLocators.LOADING_SPINNER,5)
+        self.wait_element_and_click(LoginPageLocators.login_button)
+        self.wait_element_disappear(OrderPageLocators.LOADING_SPINNER,5)
         return
 
     @allure.step("Зайти на страницу логина")
     def go_to_login(self):
-        self.driver.get(f"https://stellarburgers.nomoreparties.site/login")
+        self.open(Urls.login)
 
     @allure.step("Кликнуть на 'Лента заказов'")
     def click_order_feed(self):
-        time.sleep(1)
+        self.wait_element_disappear(OrderPageLocators.LOADING_SPINNER,5)
         self.click_element(OrderPageLocators.ORDER_FEED_BUTTON)
 
     @allure.step("Получить общее количество заказов")

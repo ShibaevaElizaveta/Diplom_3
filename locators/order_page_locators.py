@@ -3,6 +3,12 @@ from selenium.webdriver.common.by import By
 class OrderPageLocators:
     ORDERS_TOTAL = (By.CLASS_NAME, "OrderFeed_number__2MbrQ")
     ORDERS_TODAY = (By.CLASS_NAME, "OrderFeed_number__2MbrQ")
+    # Для "Выполнено за все время"
+    TOTAL_ORDERS = (By.XPATH, "//p[text()='Выполнено за все время:']/following-sibling::p")
+
+    # Для "Выполнено за сегодня"
+    TODAY_ORDERS = (By.XPATH, "//p[text()='Выполнено за сегодня:']/following-sibling::p")
+    LOADING_SPINNER = (By.CSS_SELECTOR, "img[src*='loading'][alt='loading animation']")
     ORDERS_IN_PROGRESS = (By.CSS_SELECTOR, "h2.text.text_type_digits-large.mb-8")
     CURRENT_ORDER_NUMBER_ITEM = (By.CSS_SELECTOR, "li.text.text_type_digits-default.mb-2")
     ORDER_FEED_BUTTON = (By.XPATH, "//p[contains(@class, 'AppHeader_header__linkText') and text()='Лента Заказов']")

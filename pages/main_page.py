@@ -1,28 +1,27 @@
 from seletools.actions import drag_and_drop
-import time
 from pages.base_page import BasePage
 import allure
 from locators.main_page_locators import MainPageLocators
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
+
 from selenium.common.exceptions import TimeoutException
+
 
 
 class MainPage(BasePage):
     @allure.step("Кликнуть на 'Конструктор'")
     def click_constructor(self):
-        time.sleep(2)
-        self.click_element(MainPageLocators.CONSTRUCTOR_BUTTON)
+        self.wait_element_disappear(MainPageLocators.LOADING_SPINNER,5)
+        self.wait_element_and_click(MainPageLocators.CONSTRUCTOR_BUTTON)
 
     @allure.step("Кликнуть на 'Лента заказов'")
     def click_order_feed(self):
-        time.sleep(2)
-        self.click_element(MainPageLocators.ORDER_FEED_BUTTON)
+        self.wait_element_disappear(MainPageLocators.LOADING_SPINNER,5)
+        self.wait_element_and_click(MainPageLocators.ORDER_FEED_BUTTON)
 
     @allure.step("Выбрать первый ингредиент")
     def select_first_ingredient(self):
-        time.sleep(2)
-        self.click_element(MainPageLocators.INGREDIENT_ITEM)
+        self.wait_element_disappear(MainPageLocators.LOADING_SPINNER,5)
+        self.wait_element_and_click(MainPageLocators.INGREDIENT_ITEM)
 
     @allure.step("Проверить отображение деталей ингредиента")
     def is_ingredient_details_visible(self):
@@ -49,24 +48,22 @@ class MainPage(BasePage):
     @allure.step("Создать заказ")
     def create_order(self):
         self.click_element(MainPageLocators.CREATE_ORDER_BUTTON)
-        time.sleep(5)
+        self.wait_element_disappear(MainPageLocators.LOADING_SPINNER,100)
         order_number = self.find_element(MainPageLocators.ORDERS_IN_PROGRESS).text
-        time.sleep(2)
-        self.click_element(MainPageLocators.MODAL_CLOSE_BUTTON2)
+        if(order_number == "9999"): #после обновления хром стал считывать это поля только со второго раза
+            self.wait_element_disappear(MainPageLocators.LOADING_SPINNER,5)
+            order_number = self.find_element(MainPageLocators.ORDERS_IN_PROGRESS).text
+        self.wait_element_and_click(MainPageLocators.MODAL_CLOSE_BUTTON2)
         return order_number
 
 
     @allure.step("Проверить видимость деталей ингредиента")
     def is_ingredient_details_visible(self):
         try:
-            return WebDriverWait(self.driver, 5).until(
-                EC.visibility_of_element_located(MainPageLocators.INGREDIENT_DETAILS_MODAL)
-            ).is_displayed()
+            return self.is_element_visible(MainPageLocators.INGREDIENT_DETAILS_MODAL)
         except TimeoutException:
             return False
 
     @allure.step("Закрыть модальное окно с деталями ингредиента")
     def close_ingredient_details(self):
-        WebDriverWait(self.driver, 5).until(
-            EC.element_to_be_clickable(MainPageLocators.MODAL_CLOSE_BUTTON)
-        ).click()
+        self.wait_element_and_click(MainPageLocators.MODAL_CLOSE_BUTTON)
